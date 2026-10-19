@@ -58,6 +58,107 @@ Mỗi thiết kế phải có định dạng văn bản chuẩn 4 mục (markdow
 Đồng thời trả về JSON có cấu trúc để hiển thị giao diện tương tác (bảng màu trực quan, bảng size chart tương tác, phân loại chi tiết kỹ thuật cho thợ may).
 `;
 
+// In-memory User Database with pre-configured admin123 account
+interface UserAccount {
+  id: string;
+  username: string;
+  passwordHash: string; // Plain/stored for simple authentication
+  displayName: string;
+  role: 'ADMIN' | 'MASTER_TAILOR' | 'STUDIO_DIRECTOR' | 'DESIGNER';
+  email: string;
+  createdAt: string;
+  atelierTitle: string;
+}
+
+const USERS: UserAccount[] = [
+  {
+    id: 'usr_admin123',
+    username: 'admin123',
+    passwordHash: '123456789',
+    displayName: 'Senior Fashion AI Designer & Master Tailor',
+    role: 'ADMIN',
+    email: 'admin123@atelier.fashion.ai',
+    createdAt: new Date().toISOString(),
+    atelierTitle: 'Giám Đốc Kỹ Thuật May & Trưởng Xưởng Rập (Master Tailor)',
+  },
+];
+
+// Authentication API endpoints
+app.post('/api/auth/login', (req, res) => {
+  try {
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Vui lòng nhập tên đăng nhập và mật khẩu.' });
+    }
+
+    const cleanUsername = String(username).trim().toLowerCase();
+    const user = USERS.find(u => u.username.toLowerCase() === cleanUsername);
+
+    if (!user || user.passwordHash !== String(password)) {
+      return res.status(401).json({ error: 'Tên đăng nhập hoặc mật khẩu không chính xác.' });
+    }
+
+    const token = `token_${user.id}_${Date.now()}`;
+    return res.json({
+      success: true,
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        displayName: user.displayName,
+        role: user.role,
+        email: user.email,
+        atelierTitle: user.atelierTitle,
+      },
+    });
+  } catch (error: any) {
+    return res.status(500).json({ error: 'Lỗi đăng nhập: ' + error.message });
+  }
+});
+
+app.post('/api/auth/register', (req, res) => {
+  try {
+    const { username, password, displayName } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Vui lòng cung cấp đầy đủ tên đăng nhập và mật khẩu.' });
+    }
+
+    const cleanUsername = String(username).trim().toLowerCase();
+    if (USERS.some(u => u.username.toLowerCase() === cleanUsername)) {
+      return res.status(409).json({ error: 'Tài khoản này đã tồn tại trên hệ thống.' });
+    }
+
+    const newUser: UserAccount = {
+      id: `usr_${Date.now()}`,
+      username: cleanUsername,
+      passwordHash: String(password),
+      displayName: displayName || cleanUsername,
+      role: 'DESIGNER',
+      email: `${cleanUsername}@atelier.fashion.ai`,
+      createdAt: new Date().toISOString(),
+      atelierTitle: 'Nhà Thiết Kế Thời Trang Cấp Cao',
+    };
+
+    USERS.push(newUser);
+
+    const token = `token_${newUser.id}_${Date.now()}`;
+    return res.json({
+      success: true,
+      token,
+      user: {
+        id: newUser.id,
+        username: newUser.username,
+        displayName: newUser.displayName,
+        role: newUser.role,
+        email: newUser.email,
+        atelierTitle: newUser.atelierTitle,
+      },
+    });
+  } catch (error: any) {
+    return res.status(500).json({ error: 'Lỗi đăng ký: ' + error.message });
+  }
+});
+
 // API endpoint to create fashion design & tech pack
 app.post('/api/generate-design', async (req, res) => {
   try {

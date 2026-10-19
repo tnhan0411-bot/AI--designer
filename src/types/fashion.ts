@@ -97,3 +97,13 @@ export interface FabricItem {
   tailorNotes: string;
   colorPreview: string;
 }
+
+export interface AuthUser {
+  id: string;
+  username: string;
+  displayName: string;
+  role: 'ADMIN' | 'MASTER_TAILOR' | 'STUDIO_DIRECTOR' | 'DESIGNER' | string;
+  email: string;
+  atelierTitle: string;
+}
+
