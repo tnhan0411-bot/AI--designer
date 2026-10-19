@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  h1, h2, h3, h4, .font-serif {
+    font-family: 'Cinzel', serif, Georgia;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Print optimizations for sewing workshops (Xưởng may) */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  header, footer, button, .no-print {
+    display: none !important;
+  }
+
+  .printable-techpack {
+    color: #000000 !important;
+    background: #ffffff !important;
+  }
+
+  .printable-techpack * {
+    background-color: transparent !important;
+    color: #000000 !important;
+    border-color: #cccccc !important;
+    box-shadow: none !important;
+  }
+
+  .printable-techpack svg text {
+    fill: #000000 !important;
+  }
+
+  .printable-techpack svg path,
+  .printable-techpack svg line,
+  .printable-techpack svg rect {
+    stroke: #000000 !important;
+  }
+}

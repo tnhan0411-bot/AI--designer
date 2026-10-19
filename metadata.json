@@ -1,0 +1,6 @@
+{
+  "name": "Atelier AI - Fashion Designer & Master Tailor",
+  "description": "Chuyên gia thiết kế thời trang cấp cao & Kỹ thuật may mặc: Thiết kế mẫu, bảng thông số kỹ thuật (Tech Pack), bảng màu, size chart, prompt tạo ảnh và tư vấn may mặc cho xưởng sản xuất.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
